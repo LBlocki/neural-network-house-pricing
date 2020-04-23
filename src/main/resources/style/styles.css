@@ -1,0 +1,27 @@
+
+/* use '.' to access inner properties */
+
+/* button styling */
+.button {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(white, grey);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+}
+
+.button:hover {
+    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(grey, grey);
+}
+
+/* console styling */
+#console {
+    -fx-background-color: black;
+}
+/* imagePane styling (holder of imageView with view properties) */
+#imagePane {
+    -fx-background-color: grey;
+}
