@@ -9,8 +9,21 @@ Before running you have to install both. You should also add them to the PATH.
 If you do not have maven tab on the right side of the screen right click on main project catalog
 in project tab on the left side and choose 'add framework support', then choose maven.
 After opening maven tab, click reimport dependencies. After that you can use maven console nicely
+It's a good idea to refresh maven dependencies using refresh option you can find on the maven tab.  
 
-Also don't forget to set project JDK ( File -> Project Structure) to JDK 11
+Also don't forget to set project JDK ( File -> Project Structure) to JDK 11.
+
+Also make sure to enable annotation processing for lombok.
+
+To access logger within any class use:  
+    ```
+    private final MessageProducer messageProducer = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
+    ```  
+Then when you wish to add new Message use either new Thread and its start method or Platform.runLater()  
+but the body should contain:    
+    ```
+    messageProducer.addMessage(MessageProducer.Message message);
+    ```  
 
 ### Maven commands
 Cleaning generated files

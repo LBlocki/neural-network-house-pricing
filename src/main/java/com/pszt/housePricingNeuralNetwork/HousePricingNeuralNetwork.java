@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 /**
  * <p>
- * Neural Network project for house pricing.
+ * Projekt sieci neuronowej do wyceny domow.
  * #PSZT
  *
  * @author Lukasz Blocki, Kamila Szymczuk
@@ -23,14 +23,14 @@ public class HousePricingNeuralNetwork extends Application {
     }
 
     /**
-     * @param primaryStage is provided by JavaFX.
+     * @param primaryStage dostarczana przez JavaFX.
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Root.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/View.fxml"));
 
-        Scene scene = new Scene(root, 600, 400, Color.WHITE);
+        Scene scene = new Scene(root, 1000, 600, Color.WHITE);
 
         primaryStage.setTitle("Neural Network for house pricing");
         primaryStage.setScene(scene);

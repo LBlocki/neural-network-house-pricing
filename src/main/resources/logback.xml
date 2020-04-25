@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CustomAppender" class="com.pszt.housePricingNeuralNetwork.logger.CustomStaticOutputStreamAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>[%d{HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root>
+        <appender-ref ref="CustomAppender" />
+    </root>
+</configuration>
