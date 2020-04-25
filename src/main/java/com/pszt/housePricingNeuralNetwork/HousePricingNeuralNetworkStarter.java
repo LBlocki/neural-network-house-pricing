@@ -1,8 +1,9 @@
 package com.pszt.housePricingNeuralNetwork;
 
 /**
- * This class is because of  sun.launcher.LauncherHelper error since JavaFX 11. Starting class
- * cannot extend Application for .jar file to work properly so starting here is the solution
+ * Ta klasa istnieje z powodu bledu  sun.launcher.LauncherHelper wystepujacego od JavaFX 11. Klasa startowa
+ * nie moze rozszerzac Application dla plikow .jar, dlatego uzywamy obejscia w postaci startera. Konfiguracja, aby
+ * program startowal z tej klasy znajduje sie w pom.xml
  */
 public class HousePricingNeuralNetworkStarter {
     public static void main(String[] args) {
