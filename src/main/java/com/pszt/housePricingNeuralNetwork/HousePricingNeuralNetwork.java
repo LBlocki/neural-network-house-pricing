@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 /**
  * <p>
@@ -17,6 +18,9 @@ import javafx.stage.Stage;
  * @since 2020.04.21
  */
 public class HousePricingNeuralNetwork extends Application {
+
+    @Getter
+    private static Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -36,5 +40,7 @@ public class HousePricingNeuralNetwork extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+
+        stage = primaryStage;
     }
 }
