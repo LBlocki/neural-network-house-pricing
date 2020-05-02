@@ -30,9 +30,10 @@ public class MessageProducer implements Runnable {
 
     @Override
     public void run() {
-        while(true) {
-            if (!queue.isEmpty()) {
-                try {
+        while (true) {
+            try {
+                if (!queue.isEmpty()) {
+
                     final Message message = queue.take();
                     switch (message.log_type) {
                         case INFO:
@@ -51,9 +52,12 @@ public class MessageProducer implements Runnable {
                             logger.error("[ERROR] " + message.text);
                             break;
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                } else {
+                    Thread.sleep(100);
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
