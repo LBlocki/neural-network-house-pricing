@@ -33,3 +33,6 @@ hs_err_pid*
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
+
+# local files generated
+/logs
