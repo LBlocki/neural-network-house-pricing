@@ -1,6 +1,7 @@
 package com.pszt.housePricingNeuralNetwork.config;
 
 import com.google.inject.*;
+import com.pszt.housePricingNeuralNetwork.execute.Execution;
 import com.pszt.housePricingNeuralNetwork.logger.MessageProducer;
 import com.pszt.housePricingNeuralNetwork.repository.PictureRepository;
 import com.pszt.housePricingNeuralNetwork.repository.PictureRepositoryImpl;
@@ -24,13 +25,13 @@ public class ApplicationBeansConfiguration {
     }
 
     private static class BeanModule extends AbstractModule {
-
         /**
          * Konfiguracja modułu.
          */
         protected void configure() {
             bind(LoggerService.class).to(LoggerServiceImpl.class).in(Scopes.SINGLETON);
             bind(MessageProducer.class).in(Scopes.SINGLETON);
+            bind(Execution.class).in(Scopes.SINGLETON);
             bind(PictureRepository.class).to(PictureRepositoryImpl.class).in(Scopes.SINGLETON);
             bind(PictureService.class).to(PictureServiceImpl.class).in(Scopes.SINGLETON);
         }

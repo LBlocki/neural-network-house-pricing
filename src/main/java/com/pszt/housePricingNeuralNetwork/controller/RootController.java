@@ -2,6 +2,7 @@ package com.pszt.housePricingNeuralNetwork.controller;
 
 import com.pszt.housePricingNeuralNetwork.HousePricingNeuralNetwork;
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
+import com.pszt.housePricingNeuralNetwork.execute.Execution;
 import com.pszt.housePricingNeuralNetwork.service.LoggerService;
 import com.pszt.housePricingNeuralNetwork.service.PictureService;
 import javafx.fxml.FXML;
@@ -20,7 +21,7 @@ import java.io.File;
 public class RootController {
 
     private final LoggerService loggerService = ApplicationBeansConfiguration.getInstance(LoggerService.class);
-
+    private final Execution execution = ApplicationBeansConfiguration.getInstance(Execution.class);
     private final PictureService pictureService =
             ApplicationBeansConfiguration.getInstance(PictureService.class);
 
@@ -50,5 +51,9 @@ public class RootController {
                 this.imageView.setImage(image);
             }
         }
+    }
+
+    public void startClicked() {
+        execution.testExecute();
     }
 }
