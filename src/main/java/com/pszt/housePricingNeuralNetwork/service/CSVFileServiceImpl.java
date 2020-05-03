@@ -2,70 +2,64 @@ package com.pszt.housePricingNeuralNetwork.service;
 
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
 import com.pszt.housePricingNeuralNetwork.logger.MessageProducer;
-import com.pszt.housePricingNeuralNetwork.repository.PictureRepository;
-import javafx.scene.image.Image;
+import com.pszt.housePricingNeuralNetwork.repository.CSVFileRepository;
 
 import java.io.File;
-import java.nio.file.Paths;
 
-import static com.pszt.housePricingNeuralNetwork.repository.PictureRepository.*;
 import static com.pszt.housePricingNeuralNetwork.logger.MessageProducer.*;
 
-public class PictureServiceImpl implements PictureService {
+public class CSVFileServiceImpl implements CSVFileService {
 
     private final MessageProducer messageProducer = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
-    private final PictureRepository pictureRepository =
-            ApplicationBeansConfiguration.getInstance(PictureRepository.class);
+    private final CSVFileRepository csvFileRepository =
+            ApplicationBeansConfiguration.getInstance(CSVFileRepository.class);
 
     @Override
-    public Image getCurrentImage() {
-        PictureResponse response = this.pictureRepository
-                .getCurrentImage()
+    public File getCurrentCSVFile() {
+        return this.csvFileRepository
+                .getCurrentCSVFile()
                 .onFailure(t -> this.messageProducer
                         .addMessage(Message.builder()
-                                .text("Failed to fetch current picture:" + t.getMessage())
+                                .text("Failed to fetch current csv file:" + t.getMessage())
                                 .log_type(LOG_TYPE.WARN)
                                 .build()
                         )
                 )
                 .onSuccess(t -> this.messageProducer
                         .addMessage(Message.builder()
-                                .text("Successfully fetched current picture")
+                                .text("Successfully fetched current csv file")
                                 .log_type(LOG_TYPE.INFO)
                                 .build()
                         )
                 )
                 .getOrNull();
-
-        return response != null ? response.getImage() : null;
     }
 
     @Override
-    public void saveNewPicture(File file) {
+    public void saveNewCSVFile(File file) {
 
         String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-        if (!fileExtension.equals("jpeg") && !fileExtension.equals("png")) {
+        if (!fileExtension.equals("csv")) {
             this.messageProducer
                     .addMessage(Message.builder()
-                            .text("Chosen file has incorrect extension. Possible file types are jpeg and png.")
+                            .text("Chosen file has incorrect extension (" + fileExtension + ")." +
+                                    " File must have 'csv' extension.")
                             .log_type(LOG_TYPE.WARN)
                             .build()
                     );
         } else {
-            final PictureRequest request = new PictureRequest(Paths.get(file.toURI()));
-
-            this.pictureRepository
-                    .saveNewPicture(request)
+            this.csvFileRepository
+                    .saveNewCSVFile(file)
                     .onFailure(t -> this.messageProducer
                             .addMessage(Message.builder()
-                                    .text("Failed to save new picture:" + t.getMessage())
+                                    .text("Failed to save new file: " + t.getMessage())
                                     .log_type(LOG_TYPE.WARN)
                                     .build()
                             )
                     )
                     .onSuccess(t -> this.messageProducer
                             .addMessage(Message.builder()
-                                    .text("Successfully saved new picture")
+                                    .text("Successfully saved new file: " + file.getName())
                                     .log_type(LOG_TYPE.INFO)
                                     .build()
                             )

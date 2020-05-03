@@ -4,11 +4,9 @@ import com.pszt.housePricingNeuralNetwork.HousePricingNeuralNetwork;
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
 import com.pszt.housePricingNeuralNetwork.execute.Execution;
 import com.pszt.housePricingNeuralNetwork.service.LoggerService;
-import com.pszt.housePricingNeuralNetwork.service.PictureService;
+import com.pszt.housePricingNeuralNetwork.service.CSVFileService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -22,16 +20,13 @@ public class RootController {
 
     private final LoggerService loggerService = ApplicationBeansConfiguration.getInstance(LoggerService.class);
     private final Execution execution = ApplicationBeansConfiguration.getInstance(Execution.class);
-    private final PictureService pictureService =
-            ApplicationBeansConfiguration.getInstance(PictureService.class);
+    private final CSVFileService csvFileService =
+            ApplicationBeansConfiguration.getInstance(CSVFileService.class);
 
     private  final FileChooser fileChooser = new FileChooser();
 
     @FXML
     public TextArea console;
-
-    @FXML
-    public ImageView imageView;
 
     @FXML
     public void initialize() {
@@ -40,16 +35,10 @@ public class RootController {
         this.console.setWrapText(true);
     }
 
-    public void importNewPictureClicked() {
+    public void importNewFileClicked() {
         File file = this.fileChooser.showOpenDialog(HousePricingNeuralNetwork.getStage());
         if(file != null) {
-            this.pictureService.saveNewPicture(file);
-
-            Image image = this.pictureService.getCurrentImage();
-
-            if(image != null) {
-                this.imageView.setImage(image);
-            }
+            this.csvFileService.saveNewCSVFile(file);
         }
     }
 
