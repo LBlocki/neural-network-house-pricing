@@ -26,7 +26,7 @@ public class Execution {
 
                 for (int i = 0; i < 5; i++) {
 
-                    Message message = Message.builder().text("This is message number" + i).log_type(LOG_TYPE.INFO).build();
+                    Message message = new Message("This is message number" + i, LOG_TYPE.INFO);
                     messageProducer.addMessage(message);
                     Thread.sleep(500);
                 }
@@ -36,7 +36,7 @@ public class Execution {
                 }
 
             } catch (Exception ex) {
-                Message message = Message.builder().text("Failed to run execution").log_type(LOG_TYPE.WARN).build();
+                Message message = new Message("Failed to run execution", LOG_TYPE.WARN);
                 messageProducer.addMessage(message);
                 if(messageProducer.isLoggerFileOpened(fileName)) {
                     messageProducer.disableLoggerFileOutput(fileName);

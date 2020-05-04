@@ -1,7 +1,6 @@
 package com.pszt.housePricingNeuralNetwork.logger;
 
 import io.vavr.control.Try;
-import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 import org.apache.commons.lang3.Validate;
@@ -85,7 +84,6 @@ public class MessageProducer implements Runnable {
     }
 
     @Value
-    @Builder
     public static class Message {
         @NonNull String text;
         @NonNull LOG_TYPE log_type;
