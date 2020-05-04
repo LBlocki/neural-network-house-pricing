@@ -128,8 +128,8 @@ public class MessageProducer implements Runnable {
 
                 return true;
             })
-                    .onFailure(t -> logger.warn("Failed to open file for logging. Reason: " + t.getMessage()))
-                    .onSuccess(t -> logger.info("Successfully opened file " + fileName + " for logging"))
+                    .onFailure(t -> logger.warn("[WARN] Failed to open file for logging. Reason: " + t.getMessage()))
+                    .onSuccess(t -> logger.info("[INFO] Successfully opened file " + fileName + " for logging"))
                     .getOrElse(false);
 
         }
@@ -137,7 +137,7 @@ public class MessageProducer implements Runnable {
         public void writeToLoggerFile(String message) {
 
             Try.run(() -> this.fileWriter.write(message + "\n"))
-                    .onFailure(t -> logger.warn("Failed to write message to logger file"));
+                    .onFailure(t -> logger.warn("Failed to log message to file"));
         }
 
         public void closeFileLogger(String fileName) {
@@ -145,14 +145,15 @@ public class MessageProducer implements Runnable {
             Try.run(() -> {
                 Validate.notNull(this.fileWriter, "No file is opened");
                 Validate.isTrue(this.currentFile.equals(fileName),
-                        "Given file name does not matched opened log file");
+                        "Given file name (" + fileName +
+                                ") does not matched opened log file " + this.currentFile);
 
                 this.fileWriter.close();
                 this.fileWriter = null;
                 useFileOutput = false;
             })
-                    .onFailure(t -> logger.warn("Failed to close file " + fileName))
-                    .onSuccess(t -> logger.info("Successfully closed file"));
+                    .onFailure(t -> logger.warn("[WARN] Failed to close file " + fileName))
+                    .onSuccess(t -> logger.info("[INFO] Successfully closed file " + fileName));
         }
 
         public boolean isFileOpened(String fileName) {
@@ -162,7 +163,7 @@ public class MessageProducer implements Runnable {
                 return this.fileWriter != null && this.currentFile.equals(fileName);
 
             })
-                    .onFailure(t -> logger.warn("Unable to check if file is opened. Given file name is blank."))
+                    .onFailure(t -> logger.warn("[WARN] Unable to check if file is opened. Given file name is blank."))
                     .getOrElse(false);
         }
     }
