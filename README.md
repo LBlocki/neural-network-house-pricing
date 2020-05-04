@@ -25,6 +25,10 @@ but the body should contain:
     messageProducer.addMessage(MessageProducer.Message message);
     ```  
 
+### Creation of executioners:
+For development if we want to create new executable jobs we have to use Execution Service interface. It allows
+for creation of listeners that any controller can listen to. Example of such usage is TestExecutionService
+
 ### Maven commands
 Cleaning generated files
    ```bash

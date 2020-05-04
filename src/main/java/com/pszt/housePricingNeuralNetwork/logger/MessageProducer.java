@@ -76,8 +76,6 @@ public class MessageProducer implements Runnable {
                                 break;
                         }
                     }
-                } else {
-                    Thread.sleep(100);
                 }
             }
         }).onFailure(t -> logger.warn("Failed to serve message query" + t.getMessage()));
