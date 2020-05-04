@@ -19,17 +19,13 @@ public class CSVFileServiceImpl implements CSVFileService {
         return this.csvFileRepository
                 .getCurrentCSVFile()
                 .onFailure(t -> this.messageProducer
-                        .addMessage(Message.builder()
-                                .text("Failed to fetch current csv file:" + t.getMessage())
-                                .log_type(LOG_TYPE.WARN)
-                                .build()
+                        .addMessage(
+                                new Message("Failed to fetch current csv file:" + t.getMessage(), LOG_TYPE.WARN)
                         )
                 )
                 .onSuccess(t -> this.messageProducer
-                        .addMessage(Message.builder()
-                                .text("Successfully fetched current csv file")
-                                .log_type(LOG_TYPE.INFO)
-                                .build()
+                        .addMessage(
+                                new Message("Successfully fetched current csv file", LOG_TYPE.INFO)
                         )
                 )
                 .getOrNull();
@@ -41,27 +37,21 @@ public class CSVFileServiceImpl implements CSVFileService {
         String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
         if (!fileExtension.equals("csv")) {
             this.messageProducer
-                    .addMessage(Message.builder()
-                            .text("Chosen file has incorrect extension (" + fileExtension + ")." +
-                                    " File must have 'csv' extension.")
-                            .log_type(LOG_TYPE.WARN)
-                            .build()
+                    .addMessage(
+                            new Message("Chosen file has incorrect extension (" + fileExtension + ")." +
+                                    " File must have 'csv' extension.", LOG_TYPE.WARN)
                     );
         } else {
             this.csvFileRepository
                     .saveNewCSVFile(file)
                     .onFailure(t -> this.messageProducer
-                            .addMessage(Message.builder()
-                                    .text("Failed to save new file: " + t.getMessage())
-                                    .log_type(LOG_TYPE.WARN)
-                                    .build()
+                            .addMessage(
+                                    new Message("Failed to save new file: " + t.getMessage(), LOG_TYPE.WARN)
                             )
                     )
                     .onSuccess(t -> this.messageProducer
-                            .addMessage(Message.builder()
-                                    .text("Successfully saved new file: " + file.getName())
-                                    .log_type(LOG_TYPE.INFO)
-                                    .build()
+                            .addMessage(
+                                    new Message("Successfully saved new file: " + file.getName(), LOG_TYPE.INFO)
                             )
                     );
         }
