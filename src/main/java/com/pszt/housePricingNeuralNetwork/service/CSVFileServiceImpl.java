@@ -6,11 +6,9 @@ import com.pszt.housePricingNeuralNetwork.repository.CSVFileRepository;
 
 import java.io.File;
 
-import static com.pszt.housePricingNeuralNetwork.logger.MessageProducer.*;
-
 public class CSVFileServiceImpl implements CSVFileService {
 
-    private final MessageProducer messageProducer = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
+    private final MessageProducer logger = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
     private final CSVFileRepository csvFileRepository =
             ApplicationBeansConfiguration.getInstance(CSVFileRepository.class);
 
@@ -18,16 +16,8 @@ public class CSVFileServiceImpl implements CSVFileService {
     public File getCurrentCSVFile() {
         return this.csvFileRepository
                 .getCurrentCSVFile()
-                .onFailure(t -> this.messageProducer
-                        .addMessage(
-                                new Message("Failed to fetch current csv file:" + t.getMessage(), LOG_TYPE.WARN)
-                        )
-                )
-                .onSuccess(t -> this.messageProducer
-                        .addMessage(
-                                new Message("Successfully fetched current csv file", LOG_TYPE.INFO)
-                        )
-                )
+                .onFailure(t -> this.logger.error("Failed to fetch current csv file:" + t.getMessage()))
+                .onSuccess(t -> this.logger.info("Successfully fetched current csv file"))
                 .getOrNull();
     }
 
@@ -36,24 +26,13 @@ public class CSVFileServiceImpl implements CSVFileService {
 
         String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
         if (!fileExtension.equals("csv")) {
-            this.messageProducer
-                    .addMessage(
-                            new Message("Chosen file has incorrect extension (" + fileExtension + ")." +
-                                    " File must have 'csv' extension.", LOG_TYPE.WARN)
-                    );
+            this.logger.warn("Chosen file has incorrect extension (" + fileExtension + "). File must have 'csv' extension.");
+
         } else {
             this.csvFileRepository
                     .saveNewCSVFile(file)
-                    .onFailure(t -> this.messageProducer
-                            .addMessage(
-                                    new Message("Failed to save new file: " + t.getMessage(), LOG_TYPE.WARN)
-                            )
-                    )
-                    .onSuccess(t -> this.messageProducer
-                            .addMessage(
-                                    new Message("Successfully saved new file: " + file.getName(), LOG_TYPE.INFO)
-                            )
-                    );
+                    .onFailure(t -> this.logger.error("Failed to save new file: " + t.getMessage()))
+                    .onSuccess(t -> this.logger.info("Successfully saved new file: " + file.getName()));
         }
     }
 }

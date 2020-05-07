@@ -5,28 +5,24 @@ import com.pszt.housePricingNeuralNetwork.logger.MessageProducer;
 import io.vavr.control.Try;
 import javafx.application.Platform;
 
-import static com.pszt.housePricingNeuralNetwork.logger.MessageProducer.*;
-
 import java.io.IOException;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class TestExecutionService implements ExecutionService {
 
-    private final MessageProducer messageProducer = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
+    private final MessageProducer logger = ApplicationBeansConfiguration.getInstance(MessageProducer.class);
     private final BlockingQueue<ExecutionObserver> observers = new ArrayBlockingQueue<>(16);
 
     private static boolean EXECUTION_POSSIBLE = true;
 
     @Override
     public void addObserver(ExecutionObserver observer) {
-        Try.run(() -> this.observers.add(observer)).onFailure(t -> messageProducer.addMessage(new Message(
-                "Failed to add observable (" + observer.toString() + ") to queue. Reason:" + t.getMessage(),
-                LOG_TYPE.DEBUG)))
-                .onSuccess(t -> messageProducer.addMessage(new Message(
-                        "Successfully added observable (" + observer.toString() + ") to queue.",
-                        LOG_TYPE.INFO)));
+        Try.run(() -> this.observers.add(observer))
+                .onFailure(t -> logger.error("Failed to add observable (" + observer.toString() + ") to queue. Reason:" + t.getMessage()))
+                .onSuccess(t -> logger.info("Successfully added observable (" + observer.toString() + ") to queue."));
     }
 
     @Override
@@ -42,45 +38,42 @@ public class TestExecutionService implements ExecutionService {
 
         Thread thread = new Thread(() -> {
             Platform.runLater(() -> this.observers.forEach(ExecutionObserver::reactToExecutionStart));
-            messageProducer.addMessage(new Message("Execution starting...", LOG_TYPE.INFO));
-            Random random = new Random(System.currentTimeMillis());
-            final String fileName = "logs_" + random.nextInt() + ".txt";
+            logger.info("Execution starting...");
+            final String fileName = "logs_" + this.getCurrentDateAsString() + ".txt";
 
             try {
                 EXECUTION_POSSIBLE = false;
 
-                if (!messageProducer.enableLoggerFileOutput(fileName)) {
+                if (!logger.enableLoggerFileOutput(fileName)) {
                     throw new IOException();
                 }
-                messageProducer.addMessage(new Message("Test execution starting", LOG_TYPE.INFO));
+                logger.info("Test execution starting");
                 for (int i = 0; i < 5; i++) {
 
                     if (this.observers.stream().anyMatch(ExecutionObserver::isAbortRequested)) {
-                        messageProducer.addMessage(new Message("Execution abort requested...", LOG_TYPE.INFO));
+                        logger.info("Execution abort requested...");
                         throw new RuntimeException();
                     }
 
-                    Message message = new Message("This is message number" + i, LOG_TYPE.INFO);
-                    messageProducer.addMessage(message);
+                    logger.info("This is message number " + i);
                     Thread.sleep(500);
                 }
 
-                messageProducer.addMessage(new Message("Ending test execution", LOG_TYPE.INFO));
+                logger.info("Ending test execution");
 
-                if (messageProducer.isLoggerFileOpened(fileName)) {
-                    messageProducer.disableLoggerFileOutput(fileName);
+                if (logger.isLoggerFileOpened(fileName)) {
+                    logger.disableLoggerFileOutput(fileName);
                 }
-                messageProducer.addMessage(new Message("Execution ending...", LOG_TYPE.INFO));
+                logger.info("Execution ending...");
                 Platform.runLater(() -> this.observers.forEach(ExecutionObserver::reactToExecutionEnd));
                 EXECUTION_POSSIBLE = true;
 
             } catch (Exception ex) {
-                Message message = new Message("Failed to run execution", LOG_TYPE.WARN);
-                messageProducer.addMessage(message);
+                logger.error("Failed to run execution");
                 Platform.runLater(() -> this.observers.forEach(ExecutionObserver::reactToExecutionEnd));
 
-                if (messageProducer.isLoggerFileOpened(fileName)) {
-                    messageProducer.disableLoggerFileOutput(fileName);
+                if (logger.isLoggerFileOpened(fileName)) {
+                    logger.disableLoggerFileOutput(fileName);
                 }
 
                 EXECUTION_POSSIBLE = true;
@@ -89,5 +82,10 @@ public class TestExecutionService implements ExecutionService {
 
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private String getCurrentDateAsString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        return simpleDateFormat.format(new Date());
     }
 }
