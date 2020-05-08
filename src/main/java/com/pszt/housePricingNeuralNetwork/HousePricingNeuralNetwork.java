@@ -1,6 +1,7 @@
 package com.pszt.housePricingNeuralNetwork;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -39,6 +40,10 @@ public class HousePricingNeuralNetwork extends Application {
         primaryStage.setTitle("Neural Network for house pricing");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
 
         stage = primaryStage;
