@@ -63,6 +63,9 @@ public class RootController implements ExecutionService.ExecutionObserver {
             getListOfButtons().forEach(button -> button.setDisable(true));
         }
     }
+    public void clearConsoleClicked() {
+        console.clear();
+    }
 
     @Override
     public void reactToExecutionStart() {

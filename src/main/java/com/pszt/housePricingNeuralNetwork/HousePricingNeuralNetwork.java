@@ -35,7 +35,7 @@ public class HousePricingNeuralNetwork extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/View.fxml"));
 
-        Scene scene = new Scene(root, 800, 600, Color.WHITE);
+        Scene scene = new Scene(root, 890, 600, Color.WHITE);
 
         primaryStage.setTitle("Neural Network for house pricing");
         primaryStage.setScene(scene);

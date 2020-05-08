@@ -30,11 +30,32 @@ public class MessageProducer implements Runnable {
         new Thread(this).start();
     }
 
-    public void addMessage(Message message) {
+    private void addMessage(Message message) {
         if (queue.size() < 30) {
             queue.offer(message);
         }
     }
+
+    public void debug(String text) {
+        this.addMessage(new Message(text, LOG_TYPE.DEBUG));
+    }
+
+    public void info(String text) {
+        this.addMessage(new Message(text, LOG_TYPE.INFO));
+    }
+
+    public void trace(String text) {
+        this.addMessage(new Message(text, LOG_TYPE.TRACE));
+    }
+
+    public void warn(String text) {
+        this.addMessage(new Message(text, LOG_TYPE.WARN));
+    }
+
+    public void error(String text) {
+        this.addMessage(new Message(text, LOG_TYPE.ERROR));
+    }
+
 
     public boolean enableLoggerFileOutput(String fileName) {
         return this.fileLogger.openFileLogger(fileName);
