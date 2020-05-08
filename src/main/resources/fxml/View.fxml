@@ -22,17 +22,24 @@
                                 <Image url="@../images/network.png"/>
                             </image>
                         </ImageView>
-                        <Label alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="261.0"
-                               prefWidth="296.0" text="Neural Network for house pricing" textAlignment="CENTER"
-                               textFill="WHITE" wrapText="true">
+                        <Label alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="257.0"
+                               prefWidth="322.0" text="NEURAL NETWORK" textAlignment="CENTER" textFill="WHITE"
+                               wrapText="true">
                             <font>
-                                <Font name="Kristen ITC" size="31.0"/>
+                                <Font name="Eras Bold ITC" size="34.0"/>
+                            </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity"
+                               minHeight="-Infinity" prefHeight="342.0" prefWidth="300.0"
+                               text="FOR HOUSE PRICING" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                            <font>
+                                <Font name="Eras Bold ITC" size="20.0"/>
                             </font>
                         </Label>
                         <Group fx:id="buttonGroup">
                             <children>
                                 <VBox alignment="BOTTOM_CENTER" maxHeight="Infinity" maxWidth="Infinity"
-                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="295.0"
+                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="319.0"
                                       spacing="25.0">
                                     <padding>
                                         <Insets top="80.0"/>
