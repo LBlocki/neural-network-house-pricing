@@ -3,13 +3,14 @@ package com.pszt.housePricingNeuralNetwork.controller;
 import com.pszt.housePricingNeuralNetwork.HousePricingNeuralNetwork;
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
 import com.pszt.housePricingNeuralNetwork.execute.ExecutionService;
-import com.pszt.housePricingNeuralNetwork.service.LoggerService;
 import com.pszt.housePricingNeuralNetwork.service.CSVFileService;
+import com.pszt.housePricingNeuralNetwork.service.LoggerService;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -32,9 +33,11 @@ public class RootController implements ExecutionService.ExecutionObserver {
     private static boolean SHOULD_ABORT = false;
 
     @FXML
-    public TextArea console;
+    public TextFlow console;
     @FXML
     public Group buttonGroup;
+    @FXML
+    public ScrollPane scrollPane;
 
     public RootController() {
         this.execution.addObserver(this);
@@ -42,9 +45,9 @@ public class RootController implements ExecutionService.ExecutionObserver {
 
     @FXML
     public void initialize() {
-        this.console.textProperty().addListener(val -> console.setScrollTop(Double.MAX_VALUE));
-        this.loggerService.setLoggerOutputToTextArea(console);
-        this.console.setWrapText(true);
+        scrollPane.vvalueProperty().bind(console.heightProperty());
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.loggerService.setLoggerOutputToTextFlow(console);
     }
 
     public void importNewFileClicked() {
@@ -63,8 +66,9 @@ public class RootController implements ExecutionService.ExecutionObserver {
             getListOfButtons().forEach(button -> button.setDisable(true));
         }
     }
+
     public void clearConsoleClicked() {
-        console.clear();
+        console.getChildren().clear();
     }
 
     @Override

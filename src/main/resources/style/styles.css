@@ -42,12 +42,12 @@
     -fx-background-color: #343b4b;
 }
 
-/* console styling */
-#console {
+#scroll-pane {
     -fx-border-width: 10px;
     -fx-border-color: #324252;
 }
 
+/* console styling */
 #console:disabled {
     -fx-background-color: white;
     -fx-opacity: 1;

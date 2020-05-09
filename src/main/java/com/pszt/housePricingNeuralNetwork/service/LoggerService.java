@@ -1,9 +1,9 @@
 package com.pszt.housePricingNeuralNetwork.service;
 
 
-import javafx.scene.control.TextArea;
+import javafx.scene.text.TextFlow;
 
 public interface LoggerService {
 
-    void setLoggerOutputToTextArea(TextArea textArea);
+    void setLoggerOutputToTextFlow(TextFlow textFlow);
 }

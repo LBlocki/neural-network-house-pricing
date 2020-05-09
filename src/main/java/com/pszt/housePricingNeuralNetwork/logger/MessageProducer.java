@@ -1,6 +1,8 @@
 package com.pszt.housePricingNeuralNetwork.logger;
 
 import io.vavr.control.Try;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import lombok.NonNull;
 import lombok.Value;
 import org.apache.commons.lang3.Validate;
@@ -109,6 +111,23 @@ public class MessageProducer implements Runnable {
     }
 
     public enum LOG_TYPE {INFO, WARN, DEBUG, TRACE, ERROR}
+
+    public static Color getLogColor(LOG_TYPE log_type) {
+        switch (log_type) {
+            case INFO:
+                return Color.GREEN;
+            case WARN:
+                return Color.ORANGE;
+            case DEBUG:
+                return Color.BLUE;
+            case ERROR:
+                return Color.RED;
+            case TRACE:
+                return Color.BLACK;
+            default:
+                throw new IllegalArgumentException("Unknown log type: " + log_type.toString());
+        }
+    }
 
     private static class FileLogger {
 
