@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
+<?import javafx.scene.text.TextFlow?>
 <AnchorPane prefHeight="600.0" prefWidth="885.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.pszt.housePricingNeuralNetwork.controller.RootController">
     <children>
@@ -62,21 +63,12 @@
                         </Group>
                     </children>
                 </Group>
-                <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                      minWidth="-Infinity">
-                    <children>
-                        <TextArea id="console" fx:id="console" editable="false" focusTraversable="false"
-                                  maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                  prefHeight="500.0" prefWidth="398.0" VBox.vgrow="ALWAYS" disable="true">
-                            <VBox.margin>
-                                <Insets/>
-                            </VBox.margin>
-                        </TextArea>
-                    </children>
-                    <HBox.margin>
-                        <Insets/>
-                    </HBox.margin>
-                </VBox>
+                <ScrollPane fx:id="scrollPane" id="scroll-pane" layoutX="1.0" maxHeight="Infinity" maxWidth="Infinity"
+                            minHeight="-Infinity" minWidth="-Infinity" fitToHeight="true" fitToWidth="true"
+                            prefHeight="500.0" prefWidth="398.0">
+                    <TextFlow  fx:id="console" prefHeight="500.0" prefWidth="398.0">
+                    </TextFlow>
+                </ScrollPane>
             </children>
             <padding>
                 <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
