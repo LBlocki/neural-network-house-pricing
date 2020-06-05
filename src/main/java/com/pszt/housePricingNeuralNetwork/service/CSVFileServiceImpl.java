@@ -2,6 +2,7 @@ package com.pszt.housePricingNeuralNetwork.service;
 
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
 import com.pszt.housePricingNeuralNetwork.logger.MessageProducer;
+import com.pszt.housePricingNeuralNetwork.model.CSVFile;
 import com.pszt.housePricingNeuralNetwork.repository.CSVFileRepository;
 
 import java.io.File;
@@ -13,7 +14,7 @@ public class CSVFileServiceImpl implements CSVFileService {
             ApplicationBeansConfiguration.getInstance(CSVFileRepository.class);
 
     @Override
-    public File getCurrentCSVFile() {
+    public CSVFile getCurrentCSVFile() {
         return this.csvFileRepository
                 .getCurrentCSVFile()
                 .onFailure(t -> this.logger.error("Failed to fetch current csv file:" + t.getMessage()))
