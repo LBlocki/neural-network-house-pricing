@@ -60,7 +60,7 @@ public class NNetExecutionService implements ExecutionService {
 
                 logger.info("Creating perceptron...");
                 List<BostonHouse> data = this.csvFileService.getCurrentCSVFile().getData();
-                Perceptron perceptron = new Perceptron(13, 5, 1, data);
+                Perceptron perceptron = new Perceptron(13, 13, data);
                 logger.info("Successfully created perceptron");
 
                 logger.info("Perceptron execution starting...");

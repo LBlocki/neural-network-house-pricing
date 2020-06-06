@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -55,6 +54,10 @@ public class BostonHouse {
 
     public List<Float> getListOfValues() {
         return Arrays.asList(CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, B, LSTAT, PTRATIO, MEDV);
+    }
+
+    public float[] getArrayOfValues() {
+        return new float[] {CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, B, LSTAT, PTRATIO, MEDV};
     }
 
     // normalize single data set to range [0, 1]
