@@ -17,8 +17,8 @@ public class Perceptron {
     private final IdentityFunction identityFunction = new IdentityFunction();
     private final SigmoidFunction sigmoidFunction = new SigmoidFunction();
 
-    final float MOMENTUM = 2.7f;
-    final float THRESHOLD = 0.03f;
+    final float MOMENTUM = 1.7f;
+    final float THRESHOLD = 0.025f;
     final float MAX_EPOCH = 1000;
     final float BIAS = 1f;
 
@@ -26,43 +26,54 @@ public class Perceptron {
     private final List<Node> inputLayers;
     private final List<Node[]> hiddenLayers;
     private final Node output;
-    private final List<float[][]> connections;
+    private final float[][] inputToHidden;
+    private final List<float[][]> hiddenToHidden;
+    private final float[] hiddenToOutput;
 
-    public Perceptron(Integer inputNodeCount, Integer hiddenLayerSize, List<BostonHouse> data) throws IllegalAccessException {
-        inputNodeCount += 1;
+    public Perceptron(Integer inputLayerSize, Integer hiddenLayerSize, Integer hiddenLayersCount, List<BostonHouse> data) throws IllegalAccessException {
+        // dla BIASu
+        inputLayerSize += 1;
+        hiddenLayerSize += 1;
 
-        this.inputLayers = new ArrayList<>(inputNodeCount);
+        this.inputLayers = new ArrayList<>(inputLayerSize);
         this.hiddenLayers = new ArrayList<>(hiddenLayerSize);
-        this.connections = new ArrayList<>(hiddenLayerSize + 1);
+        this.inputToHidden = new float[inputLayerSize][hiddenLayerSize];
+        this.hiddenToOutput = new float[hiddenLayerSize];
+        this.hiddenToHidden = new ArrayList<>(hiddenLayersCount - 1);
 
-        for (int x = 0; x < inputNodeCount; x++) {
+        for (int x = 0; x < inputLayerSize; x++) {
             this.inputLayers.add(new Node());
             this.inputLayers.get(x).setFun(identityFunction);
         }
 
-        for (int x = 0; x < hiddenLayerSize; x++) {
-            Node[] nodes = new Node[inputNodeCount];
-            for (int y = 0; y < inputNodeCount; y++) {
+        for (int x = 0; x < hiddenLayersCount; x++) {
+            Node[] nodes = new Node[hiddenLayerSize];
+            for (int y = 0; y < hiddenLayerSize; y++) {
                 nodes[y] = new Node();
                 nodes[y].setFun(sigmoidFunction);
             }
             this.hiddenLayers.add(nodes);
         }
 
-        for (int x = 0; x < hiddenLayerSize + 1; x++) {
-            float[][] layerCons = new float[inputNodeCount][inputNodeCount];
+        for (int i = 0; i < inputLayerSize; i++) {
+            for (int j = 0; j < hiddenLayerSize; j++) {
+                inputToHidden[i][j] = getRandomBetween(-1, 1);
+                hiddenToOutput[j] = getRandomBetween(-1, 1);
+            }
+        }
+        logger.trace(String.format("{ inputToHidden } %s", Arrays.deepToString(inputToHidden)));
+        logger.trace(String.format("{ hiddenToOutput } %s", Arrays.toString(hiddenToOutput)));
 
-            for (int i = 0; i < inputNodeCount; i++) {
-                if (i == inputNodeCount - 1) {
-                    // hidden to output layer
-                    layerCons[i][0] = getRandomBetween(-1, 1);
-                } else {
-                    for (int j = 0; j < inputNodeCount; j++) {
-                        layerCons[i][j] = getRandomBetween(-1, 1);
-                    }
+
+        for (int x = 0; x < hiddenLayersCount - 1; x++) {
+            float[][] layerCons = new float[hiddenLayerSize][hiddenLayerSize];
+
+            for (int i = 0; i < hiddenLayerSize; i++) {
+                for (int j = 0; j < hiddenLayerSize; j++) {
+                    layerCons[i][j] = getRandomBetween(-1, 1);
                 }
             }
-            this.connections.add(layerCons);
+            this.hiddenToHidden.add(layerCons);
             logger.trace(String.format("{ %d } %s", x, Arrays.deepToString(layerCons)));
         }
 
@@ -106,34 +117,34 @@ public class Perceptron {
 
     public void feedForward(float[] input) throws IllegalArgumentException {
 
-        float[] outputs = new float[this.inputLayers.size()];
-        float sum;
-
-        /* input layer connected  */
+        /* input layer connected to first hidden layer */
         // iterujemy po nodach na pierwszej warstwie ukrytej
         var firstHiddenLayer = this.hiddenLayers.get(0);
+        float[] outputs = new float[firstHiddenLayer.length];
+        float sum;
         for (int x = 0; x < firstHiddenLayer.length; x++) {
             sum = 0;
             // iterujemy po danych wejściowych x1, x2 .. xn
-            // liczymy sume x1 * waga krawędzi input to hidden ( this.connections.get(0) )
+            // liczymy sume x1 * waga krawędzi inputToHidden
             for (int y = 0; y < input.length; y++) {
                 this.inputLayers.get(y).calculateOutput(input[y]);
-                sum += input[y] * this.connections.get(0)[y][x];
+                sum += input[y] * this.inputToHidden[y][x];
             }
             // liczymy output dla noda z pierwszej warstwy ukrytej
             outputs[x] = firstHiddenLayer[x].calculateOutput(sum);
         }
 
-        /* hidden layers */
+        /* hidden layers connected to next hidden layer*/
         input = outputs;
-        // iterujemy po warstwach ukrytych (od 2 do przedostatniej)
-        for (int i = 1; i < this.connections.size() - 1; i++) {
-            Node[] currLayer = this.hiddenLayers.get(i - 1);
-            Node[] nextLayer = this.hiddenLayers.get(i);
+        // iterujemy po warstwach ukrytych
+        for (int i = 0; i < this.hiddenToHidden.size(); i++) {
+            Node[] currLayer = this.hiddenLayers.get(i);
+            Node[] nextLayer = this.hiddenLayers.get(i + 1);
+
             for (int x = 0; x < nextLayer.length; x++) {
                 sum = 0;
                 for (int y = 0; y < currLayer.length; y++) {
-                    sum += input[y] * this.connections.get(i)[y][x];
+                    sum += input[y] * this.hiddenToHidden.get(i)[y][x];
                 }
                 outputs[x] = nextLayer[x].calculateOutput(sum);
             }
@@ -143,8 +154,8 @@ public class Perceptron {
         /* last hidden layer connected with output*/
         input = outputs;
         sum = 0;
-        for (int y = 0; y < this.inputLayers.size(); y++) {
-            sum += input[y] * this.connections.get(this.connections.size() - 1)[y][0];
+        for (int y = 0; y < this.hiddenToOutput.length; y++) {
+            sum += input[y] * this.hiddenToOutput[y];
         }
         this.output.calculateOutput(sum);
 
@@ -155,51 +166,52 @@ public class Perceptron {
         float outputError = expectedOutput - this.output.getOutput();
         this.output.calculateError(outputError);
 
-        float[] hiddenLayersError = new float[inputLayers.size()];
+        float[] hiddenLayersError = new float[hiddenToOutput.length];
 
         // output to last hidden
-        for (int i = 0; i < inputLayers.size(); i++) {
-            hiddenLayersError[i] = outputError * this.connections.get(this.connections.size() - 1)[i][0];
+        for (int i = 0; i < hiddenToOutput.length; i++) {
+            hiddenLayersError[i] = outputError * this.hiddenToOutput[i];
             this.hiddenLayers.get(this.hiddenLayers.size() - 1)[i].calculateError(hiddenLayersError[i]);
         }
 
         // hidden to previous hidden
-        for (int i = this.connections.size() - 2; i > 0; i--) {
-            Node[] layer = this.hiddenLayers.get(i - 1);
-            for (int x = 0; x < layer.length; x++) {
-                float[] layerError = new float[inputLayers.size()];
-                for (int y = 0; y < this.inputLayers.size(); y++) {
-                    layerError[x] += this.connections.get(i)[x][y] * hiddenLayersError[y];
+        for (int i = this.hiddenToHidden.size() - 1; i > 0; i--) {
+            Node[] prevLayer = this.hiddenLayers.get(i - 1);
+            Node[] currLayer = this.hiddenLayers.get(i);
+            for (int x = 0; x < prevLayer.length; x++) {
+                float[] layerError = new float[prevLayer.length];
+                for (int y = 0; y < currLayer.length; y++) {
+                    layerError[x] += this.hiddenToHidden.get(i)[x][y] * hiddenLayersError[y];
                 }
                 hiddenLayersError = layerError;
-                layer[x].calculateError(hiddenLayersError[x]);
+                prevLayer[x].calculateError(hiddenLayersError[x]);
             }
         }
 
 
         /* modyfikacja wag */
         // input to first hidden
-        for (int y = 0; y < this.inputLayers.size(); y++) {
+        for (int y = 0; y < this.hiddenLayers.get(0).length; y++) {
             for (int x = 0; x < this.inputLayers.size(); x++) {
-                this.connections.get(0)[x][y] +=
+                this.inputToHidden[x][y] +=
                         this.MOMENTUM * this.hiddenLayers.get(0)[y].getError() * this.inputLayers.get(x).getInput();
             }
         }
 
         // hidden to next hidden
-        for (int i = 1; i < this.connections.size() - 1; i++) {
-            Node[] currLayer = this.hiddenLayers.get(i - 1);
-            Node[] nextLayer = this.hiddenLayers.get(i);
+        for (int i = 0; i < this.hiddenToHidden.size(); i++) {
+            Node[] currLayer = this.hiddenLayers.get(i);
+            Node[] nextLayer = this.hiddenLayers.get(i + 1);
             for (int x = 0; x < currLayer.length; x++) {
                 for (int y = 0; y < nextLayer.length; y++) {
-                    this.connections.get(i)[x][y] += this.MOMENTUM * nextLayer[y].getError() * currLayer[x].getOutput();
+                    this.hiddenToHidden.get(i)[x][y] += this.MOMENTUM * nextLayer[y].getError() * currLayer[x].getOutput();
                 }
             }
         }
 
         // last hidden to output
-        for (int i = 0; i < this.inputLayers.size(); i++) {
-            this.connections.get(this.connections.size() - 1)[i][0] +=
+        for (int i = 0; i < this.hiddenToOutput.length; i++) {
+            this.hiddenToOutput[i] +=
                     this.MOMENTUM * this.output.getError() * this.hiddenLayers.get(this.hiddenLayers.size() - 1)[i].getOutput();
         }
     }
