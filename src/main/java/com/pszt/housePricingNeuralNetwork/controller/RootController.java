@@ -72,10 +72,10 @@ public class RootController implements ExecutionService.ExecutionObserver {
     @Override
     public void reactToExecutionStart() {
         getListOfButtons().forEach(button -> {
-            if (!button.getText().equals("Start calculations")) {
+            if (!button.getText().equals("Start training")) {
                 button.setDisable(true);
             } else {
-                button.setText("Stop calculations");
+                button.setText("Stop training");
             }
         });
     }
@@ -83,8 +83,8 @@ public class RootController implements ExecutionService.ExecutionObserver {
     @Override
     public void reactToExecutionEnd() {
         getListOfButtons().forEach(button -> {
-            if (button.getText().equals("Stop calculations")) {
-                button.setText("Start calculations");
+            if (button.getText().equals("Stop training")) {
+                button.setText("Start training");
             }
             button.setDisable(false);
         });
