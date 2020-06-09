@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Glowny kontroller dla widoku
- * todo zrefaktorowac w celu zwiekszenia liczby modulow. To jest trzeba bedzie zrobic osobny kontroller
- * wraz z osobnym widokiem dla niej. Tak samo dla przyciskow + obrazka
+ * Glowny kontroler dla widoku
  */
 public class RootController implements ExecutionService.ExecutionObserver {
 
