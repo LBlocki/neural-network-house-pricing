@@ -18,11 +18,14 @@ public class Perceptron {
     private final SigmoidFunction sigmoidFunction = new SigmoidFunction();
 
     final float MOMENTUM = 1.7f;
-    final float THRESHOLD = 0.005f;
+    final float THRESHOLD = 0.004f;
     final float MAX_EPOCH = 1000;
     final float BIAS = 1f;
 
     private final List<BostonHouse> trainingData;
+    private Float minValue = Float.MIN_VALUE;
+    private Float maxValue = Float.MAX_VALUE;
+
     private final List<Node> inputLayers;
     private final List<Node[]> hiddenLayers;
     private final Node output;
@@ -81,7 +84,7 @@ public class Perceptron {
         this.output.setFun(sigmoidFunction);
 
         logger.info("Normalizing training data...");
-        this.trainingData = Perceptron.normalizeDataset(data);
+        this.trainingData = this.normalizeDataset(data);
         logger.info("Successfully normalized training data");
     }
 
@@ -107,6 +110,16 @@ public class Perceptron {
             logger.trace(String.format("%d. square error: { %f }", i, accError));
             i++;
         } while (accError >= THRESHOLD && i < MAX_EPOCH);
+    }
+
+    public Float predict(BostonHouse data) throws IllegalAccessException {
+        BostonHouse.normalize(data, this.minValue, this.maxValue);
+        var values = data.getArrayOfValues();
+        values[13] = BIAS;
+        feedForward(values);
+        data.setMEDV(this.output.getOutput());
+        BostonHouse.denormalize(data, this.minValue, this.maxValue);
+        return data.getMEDV();
     }
 
     public void feedForward(float[] input) throws IllegalArgumentException {
@@ -215,14 +228,15 @@ public class Perceptron {
         return (expectedValue - value) * (expectedValue - value) / this.inputLayers.size();
     }
 
+
     // normalize values of data set mapping them to range [0, 1]
-    public static List<BostonHouse> normalizeDataset(List<BostonHouse> dataset) throws IllegalAccessException {
+    public List<BostonHouse> normalizeDataset(List<BostonHouse> dataset) throws IllegalAccessException {
         List<Float> values = dataset.stream()
                 .map(BostonHouse::getListOfValues).collect(ArrayList::new, List::addAll, List::addAll);
-        Float min = values.stream().min(Float::compare).get();
-        Float max = values.stream().max(Float::compare).get();
+        this.minValue = values.stream().min(Float::compare).get();
+        this.maxValue = values.stream().max(Float::compare).get();
         for (BostonHouse data : dataset) {
-            BostonHouse.normalize(data, min, max);
+            BostonHouse.normalize(data, this.minValue, this.maxValue);
         }
         return dataset;
     }

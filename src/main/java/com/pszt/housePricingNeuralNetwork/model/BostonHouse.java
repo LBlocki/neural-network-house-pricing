@@ -50,7 +50,7 @@ public class BostonHouse {
     private Float LSTAT;
 
     @CsvBindByPosition(position = 13)
-    private Float MEDV = null;
+    private Float MEDV = 0f;
 
     public List<Float> getListOfValues() {
         return Arrays.asList(CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, B, LSTAT, PTRATIO, MEDV);
@@ -63,8 +63,20 @@ public class BostonHouse {
     // normalize single data set to range [0, 1]
     public static void normalize(BostonHouse data, Float min, Float max) throws IllegalAccessException {
         for (Field f : BostonHouse.class.getDeclaredFields()) {
-            var normalized = ((float) f.get(data) - min) / (max - min);
-            f.set(data, normalized);
+            if (f.get(data) != null) {
+                var normalized = ((float) f.get(data) - min) / (max - min);
+                f.set(data, normalized);
+            }
+        }
+    }
+
+    // denormalize single data set to range [0, 1]
+    public static void denormalize(BostonHouse data, Float min, Float max) throws IllegalAccessException {
+        for (Field f : BostonHouse.class.getDeclaredFields()) {
+            if (f.get(data) != null) {
+                var denormalized = (float) f.get(data) * (max - min) + min;
+                f.set(data, denormalized);
+            }
         }
     }
 }
