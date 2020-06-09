@@ -18,7 +18,7 @@ public class Perceptron {
     private final SigmoidFunction sigmoidFunction = new SigmoidFunction();
 
     final float MOMENTUM = 1.7f;
-    final float THRESHOLD = 0.025f;
+    final float THRESHOLD = 0.005f;
     final float MAX_EPOCH = 1000;
     final float BIAS = 1f;
 
@@ -91,10 +91,9 @@ public class Perceptron {
 
     public void execute() {
         int i = 0;
-        float hit, accError;
+        float accError;
 
         do {
-            hit = 0;
             accError = 0;
 
             for (BostonHouse data : trainingData) {
@@ -102,15 +101,10 @@ public class Perceptron {
                 values[13] = BIAS;
                 feedForward(values);
                 backPropagate(data.getMEDV());
-
-                if (this.output.getOutput() / data.getMEDV() > 0.5f) {
-                    hit++;
-                }
-
                 accError += this.calculateError(data.getMEDV());
             }
 
-            logger.trace(String.format("%d. precent error: { %f }\tsquare error: { %f }", i, (hit / trainingData.size()), accError));
+            logger.trace(String.format("%d. square error: { %f }", i, accError));
             i++;
         } while (accError >= THRESHOLD && i < MAX_EPOCH);
     }
@@ -218,7 +212,7 @@ public class Perceptron {
 
     public float calculateError(float expectedValue) {
         var value = this.output.getOutput();
-        return (expectedValue - value) * (expectedValue - value) / 2f;
+        return (expectedValue - value) * (expectedValue - value) / this.inputLayers.size();
     }
 
     // normalize values of data set mapping them to range [0, 1]
