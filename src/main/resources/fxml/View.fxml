@@ -49,10 +49,10 @@
                                         <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="40.0"
                                                 maxWidth="200.0" minHeight="40.0" mnemonicParsing="false"
                                                 onAction="#importNewFileClicked" prefHeight="40.0" prefWidth="200.0"
-                                                styleClass="import-button" text="Import data"/>
+                                                styleClass="import-button" text="Import and predicate"/>
                                         <Button alignment="CENTER" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
                                                 mnemonicParsing="false" onAction="#startClicked" prefHeight="40.0"
-                                                prefWidth="200.0" styleClass="marked-button" text="Start calculations"/>
+                                                prefWidth="200.0" styleClass="marked-button" text="Start training"/>
                                         <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="40.0"
                                                 maxWidth="200.0" minHeight="40.0" mnemonicParsing="false"
                                                 onAction="#clearConsoleClicked" prefHeight="40.0" prefWidth="200.0"

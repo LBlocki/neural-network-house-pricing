@@ -3,6 +3,7 @@ package com.pszt.housePricingNeuralNetwork.controller;
 import com.pszt.housePricingNeuralNetwork.HousePricingNeuralNetwork;
 import com.pszt.housePricingNeuralNetwork.config.ApplicationBeansConfiguration;
 import com.pszt.housePricingNeuralNetwork.execute.ExecutionService;
+import com.pszt.housePricingNeuralNetwork.execute.NNetExecutionService;
 import com.pszt.housePricingNeuralNetwork.service.CSVFileService;
 import com.pszt.housePricingNeuralNetwork.service.LoggerService;
 import javafx.fxml.FXML;
@@ -23,7 +24,7 @@ import java.util.List;
 public class RootController implements ExecutionService.ExecutionObserver {
 
     private final LoggerService loggerService = ApplicationBeansConfiguration.getInstance(LoggerService.class);
-    private final ExecutionService execution = ApplicationBeansConfiguration.getInstance(ExecutionService.class);
+    private final NNetExecutionService execution = ApplicationBeansConfiguration.getInstance(NNetExecutionService.class);
     private final CSVFileService csvFileService =
             ApplicationBeansConfiguration.getInstance(CSVFileService.class);
     private final FileChooser fileChooser = new FileChooser();
@@ -52,6 +53,7 @@ public class RootController implements ExecutionService.ExecutionObserver {
         File file = this.fileChooser.showOpenDialog(HousePricingNeuralNetwork.getStage());
         if (file != null) {
             this.csvFileService.saveNewCSVFile(file);
+            execution.executePrediction();
         }
     }
 
@@ -72,10 +74,10 @@ public class RootController implements ExecutionService.ExecutionObserver {
     @Override
     public void reactToExecutionStart() {
         getListOfButtons().forEach(button -> {
-            if (!button.getText().equals("Start calculations")) {
+            if (!button.getText().equals("Start training")) {
                 button.setDisable(true);
             } else {
-                button.setText("Stop calculations");
+                button.setText("Stop training");
             }
         });
     }
@@ -83,8 +85,8 @@ public class RootController implements ExecutionService.ExecutionObserver {
     @Override
     public void reactToExecutionEnd() {
         getListOfButtons().forEach(button -> {
-            if (button.getText().equals("Stop calculations")) {
-                button.setText("Start calculations");
+            if (button.getText().equals("Stop training")) {
+                button.setText("Start training");
             }
             button.setDisable(false);
         });
